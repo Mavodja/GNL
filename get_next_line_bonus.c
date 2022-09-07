@@ -1,28 +1,30 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*   get_next_line_bonus.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: acosta <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/09/07 19:25:25 by acosta            #+#    #+#             */
-/*   Updated: 2022/09/07 20:26:41 by acosta           ###   ########.fr       */
+/*   Created: 2022/09/07 20:17:45 by acosta            #+#    #+#             */
+/*   Updated: 2022/09/07 20:41:29 by acosta           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "get_next_line.h"
+
+
+#include "get_next_line_bonus.h"
 
 char	*get_next_line(int fd)
 {
 	char		*line;
-	static char	*stash;
+	static char	*stash[OPEN_MAX];
 
-	if (fd < 0 || BUFFER_SIZE <= 0)
+	if (fd < 0 || BUFFER_SIZE <= 0 || fd > OPEN_MAX)
 		return (NULL);
-	stash = read_and_stash(fd, stash);
-	if (!stash)
+	stash[fd] = read_and_stash(fd, stash[fd]);
+	if (!stash[fd])
 		return (NULL);
-	line = make_new_line(stash);
-	stash = clean_the_rest(stash);
+	line = make_new_line(stash[fd]);
+	stash[fd] = clean_the_rest(stash[fd]);
 	return (line);
 }
 
